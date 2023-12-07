@@ -1,61 +1,67 @@
 import java.util.Arrays;
 
 public class LeafNode extends Node {
-        int maxNumPairs;
-    int minNumPairs;
-    int numPairs;
-    LeafNode leftSibling;
-    LeafNode rightSibling;
-    RecordPair[] record;
+  int maxNumPairs;
+  int minNumPairs;
+  int numPairs;
+  LeafNode leftSibling;
+  LeafNode rightSibling;
+  RecordPair[] record;
 
-    public void delete(int index) {
-      this.record[index] = null;
-      numPairs--;
-    }
+  // Deletes a leaf node given an index
+  public void delete(int index) {
+    this.record[index] = null;
+    numPairs--;
+  }
 
-    public boolean insert(RecordPair dp) {
-      if (this.isFull()) {
-        return false;
-      } else {
-        this.record[numPairs] = dp;
-        numPairs++;
-        Arrays.sort(this.record, 0, numPairs);
+  // insert a record pair
+  public boolean insert(RecordPair dp) {
+    if (this.isFull()) {
+      return false;
+    } else {
+      this.record[numPairs] = dp;
+      numPairs++;
+      Arrays.sort(this.record, 0, numPairs);
 
-        return true;
-      }
-    }
-
-    public boolean isDeficient() {
-      return numPairs < minNumPairs;
-    }
-
-    public boolean isFull() {
-      return numPairs == maxNumPairs;
-    }
-
-    public boolean isLendable() {
-      return numPairs > minNumPairs;
-    }
-
-    public boolean isMergeable() {
-      return numPairs == minNumPairs;
-    }
-
-    public LeafNode(int numberOfPointers, RecordPair dp) {
-      this.maxNumPairs = numberOfPointers - 1;
-      this.minNumPairs = (int) (Math.ceil(numberOfPointers / 2) - 1);
-      this.record = new RecordPair[numberOfPointers];
-      this.numPairs = 0;
-      this.insert(dp);
-    }
-
-    public LeafNode(int numberOfPointers, RecordPair[] recordPairs, InnerNode parent) {
-      this.maxNumPairs = numberOfPointers - 1;
-      this.minNumPairs = (int) (Math.ceil(numberOfPointers / 2) - 1);
-      this.record = recordPairs;
-      this.numPairs = BPlusTree.treeSearch(recordPairs);
-      this.parent = parent;
+      return true;
     }
   }
 
+  // Checks if the node is deficient
+  public boolean isDeficient() {
+    return numPairs < minNumPairs;
+  }
 
+  // Checks if the node is ful
+  public boolean isFull() {
+    return numPairs == maxNumPairs;
+  }
+
+  // Checks if the node is lendable
+  public boolean isLendable() {
+    return numPairs > minNumPairs;
+  }
+
+  // Checks if the node is mergeable
+  public boolean isMergeable() {
+    return numPairs == minNumPairs;
+  }
+
+  // Creates a leaf node
+  public LeafNode(int numberOfPointers, RecordPair dp) {
+    this.maxNumPairs = numberOfPointers - 1;
+    this.minNumPairs = (int) (Math.ceil(numberOfPointers / 2) - 1);
+    this.record = new RecordPair[numberOfPointers];
+    this.numPairs = 0;
+    this.insert(dp);
+  }
+
+  // Creates a loaded leaf node
+  public LeafNode(int numberOfPointers, RecordPair[] recordPairs, InnerNode parent) {
+    this.maxNumPairs = numberOfPointers - 1;
+    this.minNumPairs = (int) (Math.ceil(numberOfPointers / 2) - 1);
+    this.record = recordPairs;
+    this.numPairs = BPlusTree.treeSearch(recordPairs);
+    this.parent = parent;
+  }
+}
