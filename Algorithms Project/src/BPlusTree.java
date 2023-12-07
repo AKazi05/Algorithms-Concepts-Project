@@ -19,17 +19,8 @@ public class BPlusTree {
 
 
 
-  public int binarySearch(RecordPair[] recordPairs, int numPairs, String key) {
-    Comparator<RecordPair> comparer = new Comparator<RecordPair>() {
-        @Override
-        public int compare(RecordPair o1, RecordPair o2) {
-            return o1.key.compareTo(key);
-        }
-    };
-    return Arrays.binarySearch(recordPairs, 0, numPairs, new RecordPair(key, null), comparer);
-}
 
-  public LeafNode findLeafNode(String key) {
+  public LeafNode SearchLeafNode(String key) {
     if (isEmpty()) {
       return null;
     }
@@ -58,7 +49,7 @@ public class BPlusTree {
 
 
   // Get the mid point
-  public int getMidpoint() {
+  public int returnMidpoint() {
     return (int) Math.ceil((this.numberOfPointers + 1) / 2.0) - 1;
   }
 
@@ -67,7 +58,7 @@ public class BPlusTree {
     return LeftLeafNode == null;
   }
 
-  public static int linearNullSearch(RecordPair[] recordPairs) {
+  public static int treeSearch(RecordPair[] recordPairs) {
     for (int i = 0; i < recordPairs.length; i++) {
       if (recordPairs[i] == null) {
         return i;
@@ -76,7 +67,7 @@ public class BPlusTree {
     return -1;
   }
 
-  public static int linearNullSearch(Node[] pointers) {
+  public static int treeSearch(Node[] pointers) {
     for (int i = 0; i < pointers.length; i++) {
       if (pointers[i] == null) {
         return i;
@@ -121,14 +112,14 @@ public class BPlusTree {
 
     RecordPair[] record = ln.record;
 
-    RecordPair[] halfDict = new RecordPair[this.numberOfPointers];
+    RecordPair[] halfPair = new RecordPair[this.numberOfPointers];
 
     for (int i = split; i < record.length; i++) {
-      halfDict[i - split] = record[i];
+      halfPair[i - split] = record[i];
       ln.delete(i);
     }
 
-    return halfDict;
+    return halfPair;
   }
 
 public void splitInnerNode(InnerNode in) {
@@ -136,12 +127,12 @@ public void splitInnerNode(InnerNode in) {
 
         InnerNode parent = in.parent;
 
-        int midpoint = getMidpoint();
+        int midpoint = returnMidpoint();
         String newParentKey = in.keys[midpoint];
         String[] halfKeys = splitKeys(in.keys, midpoint);
         Node[] halfPointers = splitChildPointers(in, midpoint);
 
-        in.degree = linearNullSearch(in.childPointers);
+        in.degree = treeSearch(in.childPointers);
 
         InnerNode sibling = new InnerNode(this.numberOfPointers, halfKeys, halfPointers);
         for (Node pointer : halfPointers) {
@@ -180,6 +171,15 @@ public void splitInnerNode(InnerNode in) {
             sibling.parent = parent;
         }
     }
+  public int binarySearch(RecordPair[] recordPairs, int numPairs, String key) {
+    Comparator<RecordPair> comparer = new Comparator<RecordPair>() {
+        @Override
+        public int compare(RecordPair o1, RecordPair o2) {
+            return o1.key.compareTo(key);
+        }
+    };
+    return Arrays.binarySearch(recordPairs, 0, numPairs, new RecordPair(key, null), comparer);
+}
 
 
   public String[] splitKeys(String[] keys, int split) {
@@ -201,29 +201,29 @@ public void splitInnerNode(InnerNode in) {
         LeafNode ln = new LeafNode(this.numberOfPointers, new RecordPair(key, value));
         this.LeftLeafNode = ln;
     } else {
-        LeafNode ln = (this.root == null) ? this.LeftLeafNode : findLeafNode(key);
+        LeafNode ln = (this.root == null) ? this.LeftLeafNode : SearchLeafNode(key);
 
         if (!ln.insert(new RecordPair(key, value))) {
             ln.record[ln.numPairs] = new RecordPair(key, value);
             ln.numPairs++;
             sortRecord(ln.record);
 
-            int midpoint = getMidpoint();
-            RecordPair[] halfDict = splitRecord(ln, midpoint);
+            int midpoint = returnMidpoint();
+            RecordPair[] halfPair = splitRecord(ln, midpoint);
 
             if (ln.parent == null) {
                 String[] parent_keys = new String[this.numberOfPointers];
-                parent_keys[0] = halfDict[0].key;
+                parent_keys[0] = halfPair[0].key;
                 InnerNode parent = new InnerNode(this.numberOfPointers, parent_keys);
                 ln.parent = parent;
                 parent.appendChildPointer(ln);
             } else {
-                String newParentKey = halfDict[0].key;
+                String newParentKey = halfPair[0].key;
                 ln.parent.keys[ln.parent.degree - 1] = newParentKey;
                 Arrays.sort(ln.parent.keys, 0, ln.parent.degree, Comparator.nullsLast(Comparator.naturalOrder()));
             }
 
-            LeafNode newLeafNode = new LeafNode(this.numberOfPointers, halfDict, ln.parent);
+            LeafNode newLeafNode = new LeafNode(this.numberOfPointers, halfPair, ln.parent);
 
             int pointerIndex = ln.parent.findIndexOfPointer(ln) + 1;
             ln.parent.insertChildPointer(newLeafNode, pointerIndex);
@@ -256,7 +256,7 @@ public void splitInnerNode(InnerNode in) {
       return null;
     }
 
-    LeafNode ln = (this.root == null) ? this.LeftLeafNode : findLeafNode(key);
+    LeafNode ln = (this.root == null) ? this.LeftLeafNode : SearchLeafNode(key);
 
     RecordPair[] recordPairs = ln.record;
     int index = binarySearch(recordPairs, ln.numPairs, key);
@@ -311,7 +311,7 @@ public void splitInnerNode(InnerNode in) {
 
     public ArrayList<RecordPair> getNextPartsWithData(String startPart, int count) {
       ArrayList<RecordPair> nextParts = new ArrayList<>();
-      LeafNode startLeaf = findLeafNode(startPart);
+      LeafNode startLeaf = SearchLeafNode(startPart);
 
       if (startLeaf == null) {
           return nextParts;  // Start part not found
@@ -352,7 +352,7 @@ public void splitInnerNode(InnerNode in) {
         return;
     }
 
-    LeafNode leafNode = findLeafNode(partNumber);
+    LeafNode leafNode = SearchLeafNode(partNumber);
     if (leafNode == null) {
         System.out.println("Part not found in the tree.");
         return;
@@ -436,7 +436,7 @@ public void deletePart(String partNumber) {
       return;
   }
 
-  LeafNode leafNode = findLeafNode(partNumber);
+  LeafNode leafNode = SearchLeafNode(partNumber);
   if (leafNode == null) {
       System.out.println("Part not found in the tree.");
       return;
@@ -447,11 +447,6 @@ public void deletePart(String partNumber) {
       if (record[i] != null && record[i].key.equals(partNumber)) {
           // Delete the part from the leaf node
           leafNode.delete(i);
-
-          // If the leaf node becomes deficient, handle deficiency
-          if (leafNode.isDeficient()) {
-              handleLeafDeficiency(leafNode);
-          }
 
           // Remove the corresponding line from the file
           removeLineFromFile(partNumber);
@@ -518,27 +513,6 @@ public void displayStatistics() {
 
       return 1 + maxChildDepth;
   }
-public void handleLeafDeficiency(LeafNode ln) {
-  LeafNode sibling;
-
-  if (ln.leftSibling != null && ln.leftSibling.isLendable()) {
-      sibling = ln.leftSibling;
-      // Perform necessary actions for lending
-  } else if (ln.rightSibling != null && ln.rightSibling.isLendable()) {
-      sibling = ln.rightSibling;
-      // Perform necessary actions for lending
-  } else if (ln.leftSibling != null && ln.leftSibling.isMergeable()) {
-      sibling = ln.leftSibling;
-      // Perform necessary actions for merging
-  } else if (ln.rightSibling != null && ln.rightSibling.isMergeable()) {
-      sibling = ln.rightSibling;
-      // Perform necessary actions for merging
-  }
-
-  // Perform any additional actions based on the chosen strategy
-}
-
-
 
 
 

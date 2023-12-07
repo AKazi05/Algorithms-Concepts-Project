@@ -53,7 +53,7 @@ public class LeafNode extends Node {
       this.maxNumPairs = numberOfPointers - 1;
       this.minNumPairs = (int) (Math.ceil(numberOfPointers / 2) - 1);
       this.record = recordPairs;
-      this.numPairs = BPlusTree.linearNullSearch(recordPairs);
+      this.numPairs = BPlusTree.treeSearch(recordPairs);
       this.parent = parent;
     }
   }

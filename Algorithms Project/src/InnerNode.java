@@ -54,7 +54,7 @@ public class InnerNode extends Node {
     public InnerNode(int numberOfPointers, String[] keys, Node[] pointers) {
       this.maxDegree = numberOfPointers;
       this.minDegree = (int) Math.ceil(numberOfPointers / 2.0);
-      this.degree = BPlusTree.linearNullSearch(pointers);
+      this.degree = BPlusTree.treeSearch(pointers);
       this.keys = keys;
       this.childPointers = pointers;
     }
