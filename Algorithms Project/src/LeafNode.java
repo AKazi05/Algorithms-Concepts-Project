@@ -15,11 +15,11 @@ public class LeafNode extends Node {
   }
 
   // insert a record pair
-  public boolean insert(RecordPair dp) {
+  public boolean insert(RecordPair zed) {
     if (this.isFull()) {
       return false;
     } else {
-      this.record[numPairs] = dp;
+      this.record[numPairs] = zed;
       numPairs++;
       Arrays.sort(this.record, 0, numPairs);
 
@@ -32,7 +32,7 @@ public class LeafNode extends Node {
     return numPairs < minNumPairs;
   }
 
-  // Checks if the node is ful
+  // Checks if the node is full
   public boolean isFull() {
     return numPairs == maxNumPairs;
   }
@@ -42,18 +42,14 @@ public class LeafNode extends Node {
     return numPairs > minNumPairs;
   }
 
-  // Checks if the node is mergeable
-  public boolean isMergeable() {
-    return numPairs == minNumPairs;
-  }
 
   // Creates a leaf node
-  public LeafNode(int numberOfPointers, RecordPair dp) {
+  public LeafNode(int numberOfPointers, RecordPair zed) {
     this.maxNumPairs = numberOfPointers - 1;
     this.minNumPairs = (int) (Math.ceil(numberOfPointers / 2) - 1);
     this.record = new RecordPair[numberOfPointers];
     this.numPairs = 0;
-    this.insert(dp);
+    this.insert(zed);
   }
 
   // Creates a loaded leaf node

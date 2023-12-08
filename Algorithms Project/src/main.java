@@ -3,7 +3,7 @@ import java.util.Scanner;
 
 public class main {
     public static void main(String[] args) {
-        BPlusTree bpt = new BPlusTree(3);
+        BPlusTree bpt = new BPlusTree(5);
 
         // Create path to file
         String filePath = "Algorithms Project/src/partfile.txt";
@@ -62,8 +62,8 @@ public class main {
                     ArrayList<RecordPair> nextPartsWithData = bpt.getNextPartsWithData(startPart, count);
                     if (!nextPartsWithData.isEmpty()) {
                         System.out.println("Next " + count + " parts with data:");
-                        for (RecordPair dp : nextPartsWithData) {
-                            System.out.println("Part: " + dp.key + ", Data: " + dp.value);
+                        for (RecordPair zed : nextPartsWithData) {
+                            System.out.println("Part: " + zed.key + ", Data: " + zed.value);
                         }
                     } else {
                         System.out.println("No next parts found.");

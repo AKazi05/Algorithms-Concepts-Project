@@ -50,17 +50,17 @@ public class BPlusTree {
   public void sortRecord(RecordPair[] record) {
     Arrays.sort(record, new Comparator<RecordPair>() {
       @Override
-      public int compare(RecordPair o1, RecordPair o2) {
-        if (o1 == null && o2 == null) {
+      public int compare(RecordPair record1, RecordPair record2) {
+        if (record1 == null && record2 == null) {
           return 0;
         }
-        if (o1 == null) {
+        if (record1 == null) {
           return 1;
         }
-        if (o2 == null) {
+        if (record2 == null) {
           return -1;
         }
-        return o1.compareTo(o2);
+        return record1.compareTo(record2);
       }
     });
   }
@@ -136,6 +136,7 @@ public class BPlusTree {
     } else {
       parentFusionCount++;
 
+
       parent.keys[parent.degree - 1] = newParentKey;
       Arrays.sort(parent.keys, 0, parent.degree);
 
@@ -149,8 +150,8 @@ public class BPlusTree {
   public int binarySearch(RecordPair[] recordPairs, int numPairs, String key) {
     Comparator<RecordPair> comparer = new Comparator<RecordPair>() {
       @Override
-      public int compare(RecordPair o1, RecordPair o2) {
-        return o1.key.compareTo(key);
+      public int compare(RecordPair record1, RecordPair record2) {
+        return record1.key.compareTo(key);
       }
     };
     return Arrays.binarySearch(recordPairs, 0, numPairs, new RecordPair(key, null), comparer);
@@ -195,13 +196,13 @@ public class BPlusTree {
     LeafNode currNode = this.LeftLeafNode;
     while (currNode != null) {
       RecordPair[] recordPairs = currNode.record;
-      for (RecordPair dp : recordPairs) {
-        if (dp == null) {
+      for (RecordPair zed : recordPairs) {
+        if (zed == null) {
           break;
         }
 
-        if (lowerBound.compareTo(dp.key) <= 0 && dp.key.compareTo(upperBound) <= 0) {
-          values.add(dp.value);
+        if (lowerBound.compareTo(zed.key) <= 0 && zed.key.compareTo(upperBound) <= 0) {
+          values.add(zed.value);
         }
       }
       currNode = currNode.rightSibling;
@@ -268,18 +269,18 @@ public class BPlusTree {
     while (currNode != null) {
       RecordPair[] recordPairs = currNode.record;
 
-      for (RecordPair dp : recordPairs) {
-        if (dp == null) {
+      for (RecordPair zed : recordPairs) {
+        if (zed == null) {
           break;
         }
 
         if (foundStartPart) {
-          nextParts.add(dp);
+          nextParts.add(zed);
 
           if (nextParts.size() == count) {
             return nextParts; // Found the required number of parts
           }
-        } else if (dp.key.equals(startPart)) {
+        } else if (zed.key.equals(startPart)) {
           foundStartPart = true;
         }
       }
@@ -290,6 +291,8 @@ public class BPlusTree {
     return nextParts; // Not enough parts found
   }
 
+
+  //Edits part data given the number and the new data.
   public void modifyPartData(String partNumber, String newData) {
     if (isEmpty()) {
       System.out.println("The tree is empty.");
