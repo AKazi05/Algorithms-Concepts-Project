@@ -14,18 +14,6 @@ public class LeafNode extends Node {
     numPairs--;
   }
 
-  // insert a record pair
-  public boolean insert(RecordPair zed) {
-    if (this.isFull()) {
-      return false;
-    } else {
-      this.record[numPairs] = zed;
-      numPairs++;
-      Arrays.sort(this.record, 0, numPairs);
-
-      return true;
-    }
-  }
 
   // Checks if the node is deficient
   public boolean isDeficient() {
@@ -50,6 +38,19 @@ public class LeafNode extends Node {
     this.record = new RecordPair[numberOfPointers];
     this.numPairs = 0;
     this.insert(zed);
+  }
+  
+  // insert a record pair
+  public boolean insert(RecordPair zed) {
+    if (this.isFull()) {
+      return false;
+    } else {
+      this.record[numPairs] = zed;
+      numPairs++;
+      Arrays.sort(this.record, 0, numPairs);
+
+      return true;
+    }
   }
 
   // Creates a loaded leaf node
